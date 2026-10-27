@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة الإدارة · NextStep AI</title>
+<link rel="icon" href="assets/logo-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="adm">
+<canvas id="net" aria-hidden="true"></canvas><div class="grid-bg" aria-hidden="true"></div>
+
+<form class="login" id="login" hidden>
+  <img src="assets/logo-horizontal.png" alt="NextStep AI">
+  <div><h1>دخول الإدارة</h1><p>سجّل دخولك لإدارة الورشات والمسجّلين</p></div>
+  <div><label for="em">البريد الإلكتروني</label><input id="em" type="email" dir="ltr" required autocomplete="username"></div>
+  <div><label for="pw">كلمة المرور</label><input id="pw" type="password" dir="ltr" required autocomplete="current-password"></div>
+  <button class="btn">تسجيل الدخول</button><div id="loginMsg" role="alert"></div>
+</form>
+
+<div id="app" hidden>
+  <header class="abar"><div class="wrap">
+    <img src="assets/logo-horizontal.png" alt="NextStep AI">
+    <div class="who"><span id="who" dir="ltr"></span>
+      <a class="btn sm ghost" href="index.html" target="_blank" rel="noopener">عرض الموقع</a>
+      <button class="btn sm" id="out">خروج</button></div>
+  </div></header>
+  <main class="wrap">
+    <div class="head"><div><h1>لوحة إدارة الورشات</h1><p>أضف الورشات، تابع المسجّلين، وصدّر بياناتهم بنقرة.</p></div>
+      <button class="btn" id="add">+ ورشة جديدة</button></div>
+    <div class="stats" id="stats"></div>
+    <div class="atabs" role="tablist">
+      <button role="tab" aria-selected="true" data-t="w">الورشات</button>
+      <button role="tab" aria-selected="false" data-t="r">المسجّلون</button>
+    </div>
+    <div id="tw"><div class="wlist" id="wlist"></div></div>
+    <div id="tr" hidden>
+      <div class="tools">
+        <select id="fw" aria-label="الورشة"></select>
+        <input id="q" placeholder="ابحث بالاسم أو الإيميل أو الجامعة أو البلد..." aria-label="بحث">
+        <button class="btn sm" id="csv">تصدير CSV</button>
+      </div>
+      <div class="rcount" id="rcount"></div>
+      <div class="tbl"><table><thead><tr><th>#</th><th>الاسم</th><th>الواتساب</th><th>الإيميل</th><th>التخصص</th><th>الجامعة</th><th>البلد</th><th>الورشة</th><th>التسجيل</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="modal" id="wm" role="dialog" aria-modal="true"><form class="box" id="wf" style="display:grid;gap:.9rem">
+  <h2 id="wmT" style="margin:0">ورشة</h2>
+  <div><label>العنوان</label><input name="title" required></div>
+  <div><label>عنوان فرعي</label><input name="subtitle"></div>
+  <div><label>الوصف</label><textarea name="description"></textarea></div>
+  <div class="grid2"><div><label>المحاضر / الاسم</label><input name="speaker"></div><div><label>المكان</label><input name="location"></div></div>
+  <div class="grid2"><div><label>التاريخ والوقت</label><input name="starts_at" type="datetime-local" required></div><div><label>عدد المقاعد (اختياري)</label><input name="capacity" type="number" min="1"></div></div>
+  <div class="grid2"><div><label>المدة</label><input name="duration" placeholder="3 ساعات"></div><div><label>المستوى</label><input name="level" placeholder="مبتدئ"></div></div>
+  <div class="grid2"><div><label>لغة الورشة</label><input name="language" placeholder="العربية"></div><label style="display:flex;gap:.5rem;align-items:center;margin-top:1.9rem"><input type="checkbox" name="has_certificate" style="width:auto"> تمنح شهادة حضور</label></div>
+  <div><label>ماذا سيتعلم الحضور (كل سطر نقطة)</label><textarea name="outcomes"></textarea></div>
+  <div><label>لمن الورشة (كل سطر فئة)</label><textarea name="audience"></textarea></div>
+  <div><label>الأجندة (كل سطر: الوقت | العنوان)</label><textarea name="agenda" placeholder="5:00 م | الافتتاح"></textarea></div>
+  <div><label>أسئلة شائعة (كل سطر: السؤال | الجواب)</label><textarea name="faq"></textarea></div>
+  <div><label>رابط مجموعة الواتساب (اختياري)</label><input name="whatsapp_link" dir="ltr" placeholder="يُستخدم الرابط الافتراضي إن تُرك فارغاً"></div>
+  <div><label>صورة الإعلان</label><input name="image" type="file" accept="image/*"></div>
+  <label style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" name="is_active" checked style="width:auto"> منشورة وتقبل التسجيل</label>
+  <div id="wmMsg" role="alert"></div>
+  <div class="acts"><button class="btn" id="save">حفظ</button><button type="button" class="btn ghost" id="cancel" style="color:var(--mute)">إلغاء</button></div>
+</form></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="bg.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
